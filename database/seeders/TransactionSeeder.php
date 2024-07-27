@@ -15,51 +15,34 @@ class TransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::transaction(function () {
-            $transactions = [
-                [
-                    'user_id' => 1,
-                    'amount' => 100.00,
-                    'type' => 'deposit',
-                    'status' => 1,
-                    'timestamp' => now(),
-                ],
-                [
-                    'user_id' => 1,
-                    'amount' => 50.00,
-                    'type' => 'withdraw',
-                    'status' => 1,
-                    'timestamp' => now(),
-                ],
-                [
-                    'user_id' => 2,
-                    'amount' => 300.00,
-                    'type' => 'deposit',
-                    'status' => 1,
-                    'timestamp' => now(),
-                ],
-                [
-                    'user_id' => 2,
-                    'amount' => 100.00,
-                    'type' => 'withdraw',
-                    'status' => 1,
-                    'timestamp' => now(),
-                ]
-            ];
 
-            foreach ($transactions as $transaction) {
-                Transaction::create($transaction);
-
-                $wallet = Wallet::where('user_id', $transaction['user_id'])->first();
-
-                if ($transaction['type'] == 'deposit') {
-                    $wallet->balance += $transaction['amount'];
-                } elseif ($transaction['type'] == 'withdraw') {
-                    $wallet->balance -= $transaction['amount'];
-                }
-
-                $wallet->save();
-            }
-        });
+        Transaction::create([
+            'user_id' => 1,
+            'order_id' => 1,
+            'amount' => 100.00,
+            'type' => 'deposit',
+            'status' => 'success',
+        ]);
+        Transaction::create([
+            'user_id' => 1,
+            'order_id' => 2,
+            'amount' => 50.00,
+            'type' => 'withdraw',
+            'status' => 'success',
+        ]);
+        Transaction::create([
+            'user_id' => 2,
+            'order_id' => 3,
+            'amount' => 300.00,
+            'type' => 'deposit',
+            'status' => 'success',
+        ]);
+        Transaction::create([
+            'user_id' => 2,
+            'order_id' => 4,
+            'amount' => 100.00,
+            'type' => 'withdraw',
+            'status' => 'success',
+        ]);
     }
 }

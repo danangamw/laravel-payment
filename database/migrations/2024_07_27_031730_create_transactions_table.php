@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->integer('order_id');
             $table->foreignId('user_id')->constrained('users');
             $table->double('amount');
-            $table->timestamp('timestamp');
-            $table->enum('status', [0, 1, 2])->default(0); // 0 :pending, 1: success, 2:failed
+            $table->enum('status', ['pending', 'success', 'failed']);
             $table->enum('type', ['deposit', 'withdraw']);
             $table->timestamps();
         });

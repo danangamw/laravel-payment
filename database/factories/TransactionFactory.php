@@ -19,6 +19,7 @@ class TransactionFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'order_id' => $this->faker->random_int(0, 1000000),
             'amount' => $this->faker->randomFloat(2, 0, 10000),
             'timestamp' => $this->faker->dateTime,
             'status' => $this->faker->randomElement([0, 1, 2]),
