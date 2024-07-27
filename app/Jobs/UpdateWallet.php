@@ -46,8 +46,10 @@ class UpdateWallet implements ShouldQueue
         if ($this->type === 'deposit') {
             $wallet->balance += $this->amount;
         } elseif ($this->type === 'withdraw') {
-            if ($wallet >= $this->amount) {
+            if ($wallet->balance >= $this->amount) {
                 $wallet->balance -= $this->amount;
+            } else {
+                return;
             }
         }
 

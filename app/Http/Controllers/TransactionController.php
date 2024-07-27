@@ -60,27 +60,31 @@ class TransactionController extends Controller
         $userId = Auth::id();
         $data['order_id'] = random_int(0, 1000000);
         $data['user_id'] = $userId;
-        $data['status'] = $statusMapping[$status] ?? $statusMapping['default'];
-        Transaction::create($data);
+        $message = '';
 
-        if ($status === 1) {
-            // $wallet = Wallet::query()->find($userId);
+        $wallet = Wallet::query()->find($userId);
 
-            // if ($data['type'] === 'deposit') {
-            //     $wallet->balance += $data['amount'];
-            //     $wallet->save();
-            // } else if ($data['type'] === 'withdraw') {
-            //     if ($wallet >= $data['amount']) {
-            //         $wallet->balance -= $data['amount'];
-            //         $wallet->save();
-            //     }
-            // }
+        if ($data['type'] === 'deposit') {
+
+            $data['status'] = $statusMapping[1];
             dispatch(new UpdateWallet($userId, $data['amount'], $data['type']));
+            $message = "Success, Your transaction are saved";
+        } else if ($data['type'] === 'withdraw') {
+            if ($wallet->balance >= $data['amount']) {
+
+                $data['status'] = $statusMapping[1];
+                $message = "Success, Your transaction are saved";
+                dispatch(new UpdateWallet($userId, $data['amount'], $data['type']));
+            } else {
+                $data['status'] = $statusMapping[2];
+                $message = "Failed, Balance too low.";
+            }
         }
 
+        Transaction::create($data);
 
         return to_route('transaction.index')
-            ->with('success', 'Transaction was created');
+            ->with('success', $message);
     }
 
     /**

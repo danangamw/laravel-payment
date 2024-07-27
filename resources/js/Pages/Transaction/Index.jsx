@@ -6,7 +6,7 @@ import {
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 
-export default function Dashboard({ auth, transactions, wallet }) {
+export default function Dashboard({ auth, transactions, wallet, success }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -31,56 +31,76 @@ export default function Dashboard({ auth, transactions, wallet }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <table className="w-full text-sm text-left rtl-text-right text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500">
-                                    <tr className="text-nowrap">
-                                        <th className="px-3 py-2">ID</th>
-                                        <th className="px-3 py-2">Amount</th>
-                                        <th className="px-3 py-2">Status</th>
-                                        <th className="px-3 py-2">
-                                            Transaction Type
-                                        </th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {transactions.data.map((transaction) => (
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                            <td className="px-3 py-2">
-                                                {transaction.id}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {transaction.amount}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                <span
-                                                    className={
-                                                        "px-2 py-1 rounded text-white " +
-                                                        TRANSACTION_STATUS_CLASS_MAP[
-                                                            transaction.status
-                                                        ]
-                                                    }
-                                                >
-                                                    {
-                                                        TRANSACTION_STATUS_TEXT_MAP[
-                                                            transaction.status
-                                                        ]
-                                                    }
-                                                </span>
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {transaction.type}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                    {success && (
+                        <div className="bg-emerald-500 py-2 px-4 text-white rounded mb-4">
+                            {success}
                         </div>
+                    )}
+
+                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                        {transactions.data.length === 0 ? (
+                            <p className="p-4 text-center text-gray-500 dark:text-gray-400">
+                                You don't make any transaction yet...
+                            </p>
+                        ) : (
+                            <div className="p-6 text-gray-900 dark:text-gray-100">
+                                <table className="w-full text-sm text-left rtl-text-right text-gray-500 dark:text-gray-400">
+                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500">
+                                        <tr className="text-nowrap">
+                                            <th className="px-3 py-2">ID</th>
+                                            <th className="px-3 py-2">
+                                                Amount
+                                            </th>
+                                            <th className="px-3 py-2">
+                                                Status
+                                            </th>
+                                            <th className="px-3 py-2">
+                                                Transaction Type
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {transactions.data.map(
+                                            (transaction) => (
+                                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                    <td className="px-3 py-2">
+                                                        {transaction.id}
+                                                    </td>
+                                                    <td className="px-3 py-2">
+                                                        {transaction.amount}
+                                                    </td>
+                                                    <td className="px-3 py-2">
+                                                        <span
+                                                            className={
+                                                                "px-2 py-1 rounded text-white " +
+                                                                TRANSACTION_STATUS_CLASS_MAP[
+                                                                    transaction
+                                                                        .status
+                                                                ]
+                                                            }
+                                                        >
+                                                            {
+                                                                TRANSACTION_STATUS_TEXT_MAP[
+                                                                    transaction
+                                                                        .status
+                                                                ]
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-3 py-2">
+                                                        {transaction.type}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        )}
+                                    </tbody>
+                                </table>
+                                <Pagination links={transactions.meta.links} />
+                            </div>
+                        )}
 
                         {/* <pre>{JSON.stringify(transactions, undefined, 2)}</pre> */}
-                        <Pagination links={transactions.meta.links} />
                     </div>
                 </div>
             </div>
