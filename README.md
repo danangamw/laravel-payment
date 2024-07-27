@@ -4,9 +4,19 @@
 
 ## Steps
 
-Since its running with queue for handling race condition-like on wallet update, it's required to run queue service on different process otherwise the depositr and withdraw feature will not do anything to wallet balance. so you will need to run these commands:
+Since its running with queue for handling race condition-like on wallet update, it's required to run queue service on different process otherwise the deposit and withdraw feature will not do anything to wallet balance. so you will need to run these commands:
 
--   change your .env database configuration
--   php artisan migrate --seed
--   php artisan serve
--   php artisan queue:work
+```sh
+npm install
+npm run build
+composer install
+php artisan migrate --seed
+php artisan queue
+php artisan serve
+```
+
+if views still not working run these on any terminal:
+
+```sh
+npm run dev
+```
