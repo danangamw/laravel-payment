@@ -57,6 +57,9 @@ export default function Dashboard({ auth, transactions, wallet, success }) {
                                             <th className="px-3 py-2">
                                                 Transaction Type
                                             </th>
+                                            <th className="px-3 py-2">
+                                                Transaction By
+                                            </th>
                                         </tr>
                                     </thead>
 
@@ -90,6 +93,12 @@ export default function Dashboard({ auth, transactions, wallet, success }) {
                                                     </td>
                                                     <td className="px-3 py-2">
                                                         {transaction.type}
+                                                    </td>
+                                                    <td className="px-3 py-2">
+                                                        {transaction.user
+                                                            ? transaction.user
+                                                                  .name
+                                                            : "You"}
                                                     </td>
                                                 </tr>
                                             )

@@ -2,21 +2,37 @@
 
 ## Payments App
 
-## Steps
+## Take Home Technical Test: Payments App
 
-Since its running with queue for handling race condition-like on wallet update, it's required to run queue service on different process otherwise the deposit and withdraw feature will not do anything to wallet balance. so you will need to run these commands:
+Fatures:
 
-```sh
-npm install
-npm run build
-composer install
-php artisan migrate --seed
-php artisan queue
-php artisan serve
-```
+1.  **Basic Auth**
+2.  **Transaction History**
+3.  **Deposit**
+4.  **Withdraw**
 
-if views still not working run these on any terminal:
+**Running the Application:**
 
-```sh
-npm run dev
-```
+To run the application, follow these steps:
+
+1. **Install Dependencies:**
+    - Install Node.js dependencies: `npm install`
+    - Build the frontend assets: `npm run build`
+    - Install PHP dependencies: `composer install`
+2. **Database Setup:**
+    - Change .env database config
+    - Run database migrations: `php artisan migrate --seed`
+3. **Start the Queue Worker:**
+    - Start the queue worker process: `php artisan queue`
+4. **Run the Development Server:**
+    - Start the Laravel development server: `php artisan serve`
+5. **Frontend Development (Optional):**
+    - For live reload of frontend changes while developing: `npm run dev` (in a separate terminal)
+
+**Troubleshooting:**
+
+-   **Views not loading:** If views are not rendering correctly, run `npm run dev` in a separate terminal.
+-   **Balance not updating:** If the wallet balance doesn't update immediately after a transaction, try refreshing the page.
+-   **Balance not updating:** If the wallet balance still doesn't update immediately after a transaction, Start the queue worker process: `php artisan queue`.
+
+**Note:** To ensure proper functionality of the deposit and withdraw features, the queue service must run as a separate process.

@@ -47,19 +47,34 @@ class TransactionController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $bearer = $req->header('Authorization');
-        $token = explode(' ', $bearer)[1];
-
-
-        $user = User::where('token', $token)->first();
-        $isBalanceChanged =  dispatch(new UpdateWallet($user->id, $req->amount, 'deposit'));
-
-        if (!$isBalanceChanged) {
+        $user = $this->verifyUser($req);
+        if (!$user) {
+            return response()->json(
+                [
+                    'message' => 'Token not valid'
+                ]
+            );
         }
 
-        $wallet = Wallet::where('user_id', $user->id)->first();
+        $data = [
+            'order_id' => $req->order_id,
+            'amount' => $req->amount,
+            'user_id' => $user->id,
+            'status' => 'success'
+        ];
 
-        return response()->json($wallet);
+        dispatch(new UpdateWallet($user->id, $req->amount, 'deposit'));
+
+        Transaction::create($data);
+
+
+        return response()->json(
+            [
+                'order_id' => $req->order_id,
+                'amount' => $req->amount,
+                'status' => $data['status']
+            ]
+        );
     }
 
     /**
@@ -67,6 +82,71 @@ class TransactionController extends Controller
      */
     public function withdraw(Request $req)
     {
+        $validator = Validator::make($req->all(), [
+            'order_id' => 'required',
+            'amount' => 'required|numeric|min:0',
+            'timestamp' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+
+        $user = $this->verifyUser($req);
+
+        if (!$user) {
+            return response()->json(
+                [
+                    'message' => 'Token not valid'
+                ]
+            );
+        }
+
+        $wallet = Wallet::query()->find($user->id);
+
+        $data = [
+            'order_id' => $req->order_id,
+            'amount' => $req->amount,
+            'user_id' => $user->id,
+        ];
+
+        if ($wallet->balance >= $req->amount) {
+            dispatch(new UpdateWallet($user->id, $req->amount, 'withdraw'));
+            $data['status'] = $this->getStatus(1);
+        } else {
+            $data['status'] = $this->getStatus(2);
+        }
+
+        Transaction::create($data);
+
+
+        return response()->json(
+            [
+                'order_id' => $req->order_id,
+                'amount' => $req->amount,
+                'status' => $data['status']
+            ]
+        );
+    }
+
+    private function getStatus(int $statusCode)
+    {
+        $statusMapping = [
+            0 => 'pending',
+            1 => 'success',
+            2 => 'failed',
+        ];
+
+        return $statusMapping[$statusCode];
+    }
+
+    private function verifyUser(Request $req)
+    {
+        $bearer = $req->header('Authorization');
+        $token = explode(' ', $bearer)[1];
+        $user = User::where('token', $token)->first();
+        return $user;
     }
 
     private function sendRequestToThirdParty(string $order_id, float $amount, string $timestamp)

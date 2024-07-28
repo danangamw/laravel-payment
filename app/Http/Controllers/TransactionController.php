@@ -7,7 +7,9 @@ use App\Http\Resources\TransactionResource;
 use App\Http\Resources\WalletResource;
 use App\Jobs\UpdateWallet;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Wallet;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,8 +25,13 @@ class TransactionController extends Controller
     {
         $query = Transaction::query();
         $walletQuery = Wallet::query();
-        $transactions = $query->where('user_id', $req->user()->id)->paginate(10)->onEachSide(1);
         $wallet = $walletQuery->find($req->user()->id);
+        $userRole = User::find($req->user()->id)->role;
+        if ($userRole == 'admin') {
+            $transactions = Transaction::with('user')->paginate(10)->onEachSide(1);
+        } else {
+            $transactions = $query->where('user_id', $req->user()->id)->paginate(10)->onEachSide(1);
+        }
 
         return inertia('Transaction/Index', [
             'transactions' => TransactionResource::collection($transactions),
@@ -117,5 +124,39 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         //
+    }
+
+    private function integrateWithThirdParty($fullname, $orderId, $amount, $timestamp, $url = 'https://yourdoman.com/deposti', $method = 'POST')
+    {
+        $encodedName = base64_encode($fullname);
+        $authorizationHeader = "Authorization Bearer " . $encodedName;
+        $data = [
+            'order_id' => $orderId,
+            'amount' => $amount,
+            'timestamp' => $timestamp
+        ];
+
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [$authorizationHeader, 'Content-Type : application/json']);
+
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            throw new Exception("Error: " . curl_error($ch));
+        }
+
+        curl_close($ch);
+
+        $decodedResponse = json_decode($response, true);
+
+        if (isset($decodedResponse['success']) && $decodedResponse['success'] === true) {
+            return $decodedResponse;
+        } else {
+            throw new Exception('Third Party Error: ' . (isset($decodedResponse['message'])));
+        }
     }
 }

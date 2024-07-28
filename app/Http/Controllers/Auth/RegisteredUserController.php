@@ -37,13 +37,17 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        $encodedUsername = base64_encode($request->name);
+
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'token' => base64_encode($request->name)
-        ]);
+            'token' => $encodedUsername
+        ];
 
+
+        $user = User::create($data);
         $userId = $user->id;
         Wallet::create([
             'user_id' => $userId,

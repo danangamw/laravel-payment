@@ -10,3 +10,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/transactions', [TransactionController::class, 'index']);
 Route::post('/deposit', [TransactionController::class, 'deposit']);
+Route::post('/withdraw', [TransactionController::class, 'withdraw']);

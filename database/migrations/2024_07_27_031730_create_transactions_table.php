@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->integer('order_id');
+            $table->string('order_id');
             $table->foreignId('user_id')->constrained('users');
             $table->double('amount');
             $table->enum('status', ['pending', 'success', 'failed']);

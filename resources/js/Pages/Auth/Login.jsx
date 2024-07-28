@@ -101,6 +101,12 @@ export default function Login({ status, canResetPassword }) {
                         Log in
                     </PrimaryButton>
                 </div>
+
+                <div className=" dark:text-white text-gray-700 text-md mt-4 flex flex-col justify-start">
+                    <p>Psst... you can log in with these credentials:</p>
+                    <p>email: admin@admin.com</p>
+                    <p>password: testing123</p>
+                </div>
             </form>
         </GuestLayout>
     );
