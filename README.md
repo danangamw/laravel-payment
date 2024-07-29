@@ -15,7 +15,7 @@ Fatures:
 
 To run the application, follow these steps:
 
-1. **Install Dependencies & Application Key:**
+1. **Install Dependencies & Encryption Key:**
     - Generate laravel encryption key `php artisan key:generate`
     - Install Node.js dependencies: `npm install`
     - Build the frontend assets: `npm run build`
