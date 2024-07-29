@@ -15,18 +15,19 @@ Fatures:
 
 To run the application, follow these steps:
 
-1. **Install Dependencies:**
+1. **Install Dependencies & Application Key:**
+    - Generate laravel encryption key `php artisan key:generate`
     - Install Node.js dependencies: `npm install`
     - Build the frontend assets: `npm run build`
     - Install PHP dependencies: `composer install`
-2. **Database Setup:**
+3. **Database Setup:**
     - Change .env database config
     - Run database migrations: `php artisan migrate --seed`
-3. **Start the Queue Worker:**
+4. **Start the Queue Worker:**
     - Start the queue worker process: `php artisan queue`
-4. **Run the Development Server:**
+5. **Run the Development Server:**
     - Start the Laravel development server: `php artisan serve`
-5. **Frontend Development (Optional):**
+6. **Frontend Development (Optional):**
     - For live reload of frontend changes while developing: `npm run dev` (in a separate terminal)
 
 **Troubleshooting:**
